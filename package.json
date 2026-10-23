@@ -1,0 +1,57 @@
+{
+  "name": "buah-bekasi-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Fresh Distribution Business Operating System — Bekasi",
+  "engines": {
+    "node": ">=22.12"
+  },
+  "type": "module",
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "playwright test",
+    "db:generate": "drizzle-kit generate",
+    "db:check": "drizzle-kit check",
+    "db:schema-sql": "node --import tsx scripts/generate-schema-sql.ts",
+    "db:schema-sql:check": "node --import tsx scripts/generate-schema-sql.ts --check",
+    "db:migrate": "node --env-file=.env.local --import tsx scripts/migrate.ts",
+    "db:seed-system": "node --env-file=.env.local --import tsx scripts/seed-system.ts",
+    "setup:owner": "node --env-file=.env.local --import tsx scripts/create-owner.ts",
+    "seed:dev": "node --env-file=.env.local --import tsx scripts/seed-dev-synthetic.ts"
+  },
+  "dependencies": {
+    "@types/qrcode": "^1.5.6",
+    "better-auth": "^1.7.12",
+    "decimal.js": "^10.6.0",
+    "drizzle-orm": "^0.45.4",
+    "next": "^16.4.2",
+    "pg": "^8.23.1",
+    "qrcode": "^1.5.4",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "@tailwindcss/postcss": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/pg": "^8.23.1",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "drizzle-kit": "^0.31.11",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.2",
+    "prettier": "^3.9.10",
+    "tailwindcss": "^4.3.3",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.5"
+  }
+}
