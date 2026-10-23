@@ -43,7 +43,17 @@ export function LoginForm({ isDevMode, devQuickFill }: LoginFormProps) {
       });
 
       if (!res.ok) {
-        setErrorMsg("Username/email atau kata sandi tidak sesuai, atau akun sedang dinonaktifkan.");
+        if (res.status >= 500) {
+          setErrorMsg(
+            "Server gagal terhubung ke database (HTTP 500). Pastikan DATABASE_URL di Vercel memakai format postgresql://... dari Supabase lalu Redeploy.",
+          );
+        } else if (res.status === 403) {
+          setErrorMsg(
+            "Domain origin ditolak (HTTP 403). Pastikan BETTER_AUTH_URL di Vercel sesuai dengan alamat website ini lalu Redeploy.",
+          );
+        } else {
+          setErrorMsg("Username/email atau kata sandi tidak sesuai, atau akun sedang dinonaktifkan.");
+        }
         setSubmitting(false);
         return;
       }

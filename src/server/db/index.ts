@@ -35,10 +35,20 @@ export function getPool(): pg.Pool {
   if (globalThis.__buahPgPool) {
     void globalThis.__buahPgPool.end().catch(() => undefined);
   }
+  const isSupabaseOrCloudSsl =
+    /supabase\.(co|com)/i.test(url) || /[?&]sslmode=(require|prefer|no-verify)/i.test(url);
+  // Strip sslmode from URL when we pass explicit ssl options so pg-connection-string >= 2.14
+  // does not override rejectUnauthorized:false with verify-full on Supabase pooler certs.
+  const normalizedUrl = isSupabaseOrCloudSsl
+    ? url.replace(/([?&])sslmode=[^&]+(&|$)/i, (_, p1: string, p2: string) =>
+        p2 === "&" ? p1 : "",
+      )
+    : url;
   const pool = new Pool({
-    connectionString: url,
+    connectionString: normalizedUrl,
     max: 10,
     idleTimeoutMillis: 30_000,
+    ...(isSupabaseOrCloudSsl ? { ssl: { rejectUnauthorized: false } } : {}),
   });
   globalThis.__buahPgPool = pool;
   globalThis.__buahPoolUrl = url;

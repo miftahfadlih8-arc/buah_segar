@@ -41,6 +41,28 @@ export function createAuth() {
   return betterAuth({
     secret,
     baseURL,
+    trustedOrigins: (request) => {
+      const origins = new Set<string>(["http://localhost:3000", baseURL.replace(/\/+$/, "")]);
+      for (const envUrl of [
+        process.env.BETTER_AUTH_URL,
+        process.env.APP_BASE_URL,
+        process.env.NEXT_PUBLIC_APP_URL,
+      ]) {
+        if (envUrl?.trim()) origins.add(envUrl.trim().replace(/\/+$/, ""));
+      }
+      for (const vercelHost of [
+        process.env.VERCEL_URL,
+        process.env.VERCEL_BRANCH_URL,
+        process.env.VERCEL_PROJECT_PRODUCTION_URL,
+      ]) {
+        if (vercelHost?.trim()) origins.add(`https://${vercelHost.trim().replace(/^https?:\/\//, "")}`);
+      }
+      const reqOrigin = request?.headers.get("origin");
+      if (reqOrigin && /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(reqOrigin)) {
+        origins.add(reqOrigin);
+      }
+      return Array.from(origins);
+    },
     database: drizzleAdapter(db, {
       provider: "pg",
       schema: {
